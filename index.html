@@ -2,205 +2,419 @@
 
 <html lang="ru">
 
-<head><meta name="yandex-verification" content="78781c3502b03a49" />
+<head>
 
-    
+   <meta charset="UTF-8">
+
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+   <title>NEXUS AI | Thinking Wave v.21.8</title>
+
+   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+
+   <style>
+
+       :root { --p: #ffffff; --bg: #000000; }
+
+       body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: #fff; overflow: hidden; display: flex; justify-content: center; align-items: center; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+       #cosmos { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: 10; pointer-events: none; }
+
+       .star { position: absolute; background: white; border-radius: 50%; opacity: 0.6; }
+
+       .comet { position: absolute; width: 1px; background: linear-gradient(180deg, rgba(255,255,255,0.8), transparent); }
+
+       #pixel-canvas { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: 150; pointer-events: none; }
+
+       .pixel { position: absolute; background: #fff; border-radius: 50%; }
 
 
 
-    <meta charset="UTF-8">
+       #core-star { position: absolute; width: 160px; height: 160px; background: white; border-radius: 50%; box-shadow: 0 0 60px white, 0 0 100px white; z-index: 100; top: -300px; left: 50%; transform: translate(-50%, -50%); display: flex; justify-content: center; align-items: center; cursor: pointer; }
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-    
-
-    <meta name="yandex-verification" content="78781c3502b03a49" />
+       #core-star span { color: black; font-family: 'Orbitron'; font-weight: 900; font-size: 22px; opacity: 0; pointer-events: none; }
 
 
 
-    <title>NEXUS AI | Thinking Wave v.21.8</title>
+       #hub-menu { display: none; position: absolute; gap: 25px; z-index: 500; justify-content: center; width: 100%; }
 
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+       /* Добавил transition для плавности */
 
-    <style>
+       .hub-btn { width: 120px; height: 120px; border-radius: 50%; background: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; opacity: 0; transform: scale(0.5); border: none; transition: transform 0.4s ease; }
 
-        :root { --p: #ffffff; --bg: #000000; }
+       .hub-btn b { font-size: 30px; color: #000; }
 
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: #fff; overflow: hidden; display: flex; justify-content: center; align-items: center; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+       .hub-btn span { font-family: 'Orbitron'; font-size: 8px; color: #000; margin-top: 5px; font-weight: 900; text-align: center; }
 
-        #cosmos { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: 10; pointer-events: none; }
 
-        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.6; }
 
-        .comet { position: absolute; width: 1px; background: linear-gradient(180deg, rgba(255,255,255,0.8), transparent); }
+       .nexus-box { display: none; position: absolute; width: min(400px, 90vw); background: rgba(0,0,0,0.95); border: 2px solid #fff; border-radius: 20px; padding: 25px; z-index: 1000; text-align: center; }
 
-        #core-star { position: absolute; width: 160px; height: 160px; background: white; border-radius: 50%; box-shadow: 0 0 60px white, 0 0 100px white; z-index: 100; top: -200px; left: 50%; transform: translate(-50%, -50%); display: flex; justify-content: center; align-items: center; }
+       #res { height: 200px; overflow-y: auto; text-align: left; margin-bottom: 15px; border-bottom: 1px solid #333; font-size: 14px; }
 
-        #core-star span { color: black; font-family: 'Orbitron'; font-weight: 900; font-size: 22px; opacity: 0; }
+       input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #444; background: #000; color: #fff; margin-bottom: 10px; box-sizing: border-box; }
 
-        #hub-menu { display: none; position: absolute; gap: 35px; z-index: 500; }
+       button { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #fff; color: #000; font-weight: 900; cursor: pointer; font-family: 'Orbitron'; margin-top: 5px; }
 
-        .hub-btn { width: 140px; height: 140px; border-radius: 50%; background: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; opacity: 0; transform: scale(0.5); }
 
-        .hub-btn b { font-size: 40px; color: #000; }
 
-        .hub-btn span { font-family: 'Orbitron'; font-size: 10px; color: #000; margin-top: 8px; font-weight: 900; }
+       #game-area { width: 100%; height: 200px; background: #111; border: 1px solid #333; position: relative; overflow: hidden; margin-top: 10px; border-radius: 10px; }
 
-        .nexus-box { display: none; position: absolute; width: min(400px, 90vw); background: rgba(0,0,0,0.95); border: 2px solid #fff; border-radius: 20px; padding: 25px; z-index: 1000; text-align: center; }
+       #target { width: 40px; height: 40px; background: #fff; border-radius: 50%; position: absolute; display: none; cursor: crosshair; box-shadow: 0 0 15px #fff; }
 
-        #res { height: 250px; overflow-y: auto; text-align: left; margin-bottom: 15px; border-bottom: 1px solid #333; font-size: 14px; padding-right: 5px; }
-
-        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #444; background: #000; color: #fff; margin-bottom: 10px; box-sizing: border-box; }
-
-        button { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #fff; color: #000; font-weight: 900; cursor: pointer; font-family: 'Orbitron'; }
-
-        .dot { display: inline-block; animation: wave 1s infinite; }
-
-        @keyframes wave { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-
-    </style>
+   </style>
 
 </head>
 
 <body>
 
-    <div id="cosmos"></div>
 
-    <div id="core-star"><span>START</span></div>
 
-    <div id="chat-trigger" style="position:absolute; z-index:150; width:160px; height:160px; cursor:pointer; top:50%; left:50%; transform:translate(-50%, -50%); display:none" onclick="detonate()"></div>
+   <div id="cosmos"></div>
 
-    <div id="hub-menu">
+   <div id="pixel-canvas"></div>
 
-        <div class="hub-btn" onclick="openModule('chat')"><b>💬</b><span>NEURAL LINK</span></div>
+   
 
-        <div class="hub-btn" onclick="openModule('status')"><b>⚙️</b><span>SYSTEM</span></div>
+   <div id="core-star" onclick="detonate()"><span>START</span></div>
 
-    </div>
 
-    <div class="nexus-box" id="chat-box">
 
-        <h2 style="font-family:Orbitron; font-size:18px;">NEURAL LINK</h2>
+   <div id="hub-menu">
 
-        <div id="res"></div>
+       <div class="hub-btn" onclick="openModule('chat')"><b>💬</b><span>NEURAL LINK</span></div>
 
-        <input id="c-in" placeholder="Сигнал...">
+       <div class="hub-btn" onclick="openModule('game')"><b>🎮</b><span>REFLEX</span></div>
 
-        <button onclick="sendChat()">ОТПРАВИТЬ</button>
+       <div class="hub-btn" onclick="openModule('status')"><b>⚙️</b><span>SYSTEM</span></div>
 
-        <button style="background:none; color:#fff; border:1px solid #fff; margin-top:10px" onclick="closeModule('chat')">НАЗАД</button>
+   </div>
 
-    </div>
 
-    <div class="nexus-box" id="status-box">
 
-        <h2 style="font-family:Orbitron">SYSTEM STATUS</h2>
+   <div class="nexus-box" id="chat-box">
 
-        <p style="font-family:monospace; text-align:left">> HOST: DISCORDBRUHBOT<br>> PROJECT: NEXUS v.21.8<br>> YANDEX KEY: 7878...3a49<br>> STATUS: VERIFIED</p>
+       <h2 style="font-family:Orbitron; font-size:18px;">NEURAL LINK</h2>
 
-        <button onclick="closeModule('status')">ЗАКРЫТЬ</button>
+       <div id="res"></div>
 
-    </div>
+       <input id="c-in" placeholder="Сигнал...">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+       <button onclick="sendChat()">ОТПРАВИТЬ</button>
 
-    <script>
+       <button style="background:none; color:#fff; border:1px solid #fff;" onclick="closeModule('chat')">НАЗАД</button>
 
-        const particles = [];
+   </div>
 
-        function createCosmos() {
 
-            for (let i = 0; i < 150; i++) {
 
-                const s = document.createElement('div');
+   <div class="nexus-box" id="game-box">
 
-                s.className = Math.random() > 0.9 ? 'comet' : 'star';
+       <h2 style="font-family:Orbitron; font-size:18px;">CYBER REFLEX</h2>
 
-                s.style.left = Math.random() * 100 + 'vw';
+       <p id="game-info">Набери очки!</p>
 
-                s.style.top = Math.random() * -100 + 'vh';
+       <div id="game-area"><div id="target" onclick="hitTarget()"></div></div>
 
-                const size = Math.random() * 3 + 1;
+       <div style="margin-top: 10px; font-family: Orbitron; font-size: 12px;">Score: <span id="score">0</span> | Time: <span id="timer">15</span>s</div>
 
-                s.style.width = size + 'px';
+       <button id="start-game-btn" onclick="startGame()">ИГРАТЬ</button>
 
-                s.style.height = s.className === 'comet' ? (Math.random()*50+30)+'px' : size + 'px';
+       <button style="background:none; color:#fff; border:1px solid #fff;" onclick="closeModule('game')">НАЗАД</button>
 
-                document.getElementById('cosmos').appendChild(s);
+   </div>
 
-                particles.push({el: s, speed: Math.random() * 2 + 1});
 
-            }
 
-        }
+   <div class="nexus-box" id="status-box">
 
-        function animateStars() {
+       <h2 style="font-family:Orbitron">SYSTEM STATUS</h2>
 
-            particles.forEach(s => {
+       <p style="font-family:monospace; text-align:left">> HOST: DISCORDBRUHBOT<br>> PROJECT: NEXUS v.21.8<br>> STATUS: VERIFIED</p>
 
-                let t = parseFloat(s.el.style.top); t += s.speed;
+       <button onclick="closeModule('status')">ЗАКРЫТЬ</button>
 
-                if (t > window.innerHeight) { t = -100; s.el.style.left = Math.random() * 100 + 'vw'; }
+   </div>
 
-                s.el.style.top = t + 'px';
 
-            });
 
-            requestAnimationFrame(animateStars);
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
-        }
+   <script>
 
-        window.onload = () => {
+       const particles = [];
 
-            createCosmos(); animateStars();
+       let score = 0, timeLeft = 15, gameActive = false;
 
-            gsap.timeline().to('#core-star', {top:'50%', duration:1.5, ease:'back.out(1.7)'}).to('#core-star span', {opacity:1}).set('#chat-trigger', {display:'block'});
 
-        };
 
-        function detonate() {
+       function createCosmos() {
 
-            gsap.to('#core-star', {scale:20, opacity:0, duration:0.6});
+           for (let i = 0; i < 150; i++) {
 
-            document.getElementById('chat-trigger').style.display='none';
+               const s = document.createElement('div');
 
-            setTimeout(() => { document.getElementById('hub-menu').style.display='flex'; gsap.to('.hub-btn', {opacity:1, scale:1, stagger:0.2}); }, 400);
+               s.className = Math.random() > 0.9 ? 'comet' : 'star';
 
-        }
+               s.style.left = Math.random() * 100 + 'vw';
 
-        function openModule(id) { document.getElementById('hub-menu').style.display='none'; document.getElementById(id+'-box').style.display='block'; }
+               s.style.top = Math.random() * -100 + 'vh';
 
-        function closeModule(id) { document.getElementById(id+'-box').style.display='none'; document.getElementById('hub-menu').style.display='flex'; }
+               const size = Math.random() * 3 + 1;
 
-        async function sendChat() {
+               s.style.width = size + 'px';
 
-            const i = document.getElementById('c-in'), r = document.getElementById('res');
+               s.style.height = s.className === 'comet' ? (Math.random()*50+30)+'px' : size + 'px';
 
-            if(!i.value) return;
+               document.getElementById('cosmos').appendChild(s);
 
-            const m = i.value; i.value = '';
+               particles.push({el: s, speed: Math.random() * 2 + 1});
 
-            r.innerHTML += `<div><b>Вы:</b> ${m}</div>`;
+           }
 
-            const t = document.createElement('div'); t.innerHTML = `<b>Nexus:</b> <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>`;
+       }
 
-            r.appendChild(t);
 
-            try {
 
-                const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(m)}?model=openai&system=Nexus assistant. Short and mysterious.`);
+       function animateStars() {
 
-                const txt = await res.text();
+           particles.forEach(s => {
 
-                t.innerHTML = `<b>Nexus:</b> ${txt}`;
+               let t = parseFloat(s.el.style.top); t += s.speed;
 
-            } catch { t.innerHTML = `<b>Nexus:</b> Система перегружена.`; }
+               if (t > window.innerHeight) { t = -100; s.el.style.left = Math.random() * 100 + 'vw'; }
 
-            r.scrollTop = r.scrollHeight;
+               s.el.style.top = t + 'px';
 
-        }
+           });
 
-    </script>
+           requestAnimationFrame(animateStars);
+
+       }
+
+
+
+       window.onload = () => {
+
+           createCosmos(); animateStars();
+
+           gsap.timeline()
+
+             .to('#core-star', {top: '90%', duration: 0.7, ease: 'power2.in'})
+
+             .to('#core-star', {top: '30%', duration: 0.5, ease: 'power2.out'})
+
+             .to('#core-star', {top: '50%', duration: 1, ease: 'back.out(2)', onComplete: () => {
+
+                // Один удар взрывной волны при фиксации
+
+                gsap.to('body', { x: -20, y: 15, duration: 0.05, yoyo: true, repeat: 3 });
+
+                gsap.to('#core-star span', {opacity:1});
+
+             }});
+
+       };
+
+
+
+       function detonate() {
+
+           const core = document.getElementById('core-star');
+
+           const canvas = document.getElementById('pixel-canvas');
+
+           const rect = core.getBoundingClientRect();
+
+           core.style.display = 'none';
+
+           for (let r = 0; r < 35; r++) {
+
+               for (let c = 0; c < 35; c++) {
+
+                   if (Math.sqrt(Math.pow(c-17.5,2) + Math.pow(r-17.5,2)) < 17.5) {
+
+                       const p = document.createElement('div');
+
+                       p.className = 'pixel'; p.style.width = '5px'; p.style.height = '5px';
+
+                       p.style.left = (rect.left + c*5)+'px'; p.style.top = (rect.top + r*5)+'px';
+
+                       canvas.appendChild(p);
+
+                       gsap.to(p, { x: (Math.random()-0.5)*400, y: window.innerHeight + 100, opacity: 0, duration: 1.2 + Math.random(), onComplete: () => p.remove() });
+
+                   }
+
+               }
+
+           }
+
+           setTimeout(() => { 
+
+               document.getElementById('hub-menu').style.display = 'flex'; 
+
+               gsap.fromTo('.hub-btn', {opacity:0, scale:0.5}, {opacity:1, scale:1, stagger:0.1, duration: 0.4}); 
+
+           }, 600);
+
+       }
+
+
+
+       // --- НОВАЯ ЛОГИКА ПЕРЕХОДА (РАЗЛЕТ И ЗУМ) ---
+
+       function openModule(id) {
+
+           const btns = document.querySelectorAll('.hub-btn');
+
+           const targetIdx = (id === 'chat') ? 0 : (id === 'game') ? 1 : 2;
+
+           const targetBtn = btns[targetIdx];
+
+
+
+           btns.forEach((btn, idx) => {
+
+               if (idx < targetIdx) {
+
+                   // Слева — отлетают влево
+
+                   gsap.to(btn, { x: -600, opacity: 0, duration: 0.4, ease: "power2.in" });
+
+               } else if (idx > targetIdx) {
+
+                   // Справа — отлетают вправо
+
+                   gsap.to(btn, { x: 600, opacity: 0, duration: 0.4, ease: "power2.in" });
+
+               }
+
+           });
+
+
+
+           // Зум выбранного круга
+
+           gsap.to(targetBtn, { 
+
+               scale: 4, 
+
+               opacity: 0, 
+
+               duration: 0.4, 
+
+               ease: "expo.in",
+
+               onComplete: () => {
+
+                   document.getElementById('hub-menu').style.display = 'none';
+
+                   document.getElementById(id + '-box').style.display = 'block';
+
+                   // Чистим стили для возврата
+
+                   gsap.set(btns, { x: 0, scale: 1, opacity: 1 });
+
+               }
+
+           });
+
+       }
+
+
+
+       function closeModule(id) {
+
+           document.getElementById(id + '-box').style.display = 'none';
+
+           const menu = document.getElementById('hub-menu');
+
+           menu.style.display = 'flex';
+
+           gsap.fromTo('.hub-btn', { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, stagger: 0.1, duration: 0.4 });
+
+           if (id === 'game') resetGame();
+
+       }
+
+
+
+       // ИГРА REFLEX
+
+       function startGame() {
+
+           score = 0; timeLeft = 15; gameActive = true;
+
+           document.getElementById('score').innerText = score;
+
+           document.getElementById('start-game-btn').style.display = 'none';
+
+           moveTarget();
+
+           const timerInterval = setInterval(() => {
+
+               timeLeft--;
+
+               document.getElementById('timer').innerText = timeLeft;
+
+               if (timeLeft <= 0) { clearInterval(timerInterval); endGame(); }
+
+           }, 1000);
+
+       }
+
+       function moveTarget() {
+
+           if (!gameActive) return;
+
+           const t = document.getElementById('target'), a = document.getElementById('game-area');
+
+           t.style.left = Math.random() * (a.clientWidth - 40) + 'px';
+
+           t.style.top = Math.random() * (a.clientHeight - 40) + 'px';
+
+           t.style.display = 'block';
+
+       }
+
+       function hitTarget() { if (gameActive) { score++; document.getElementById('score').innerText = score; moveTarget(); } }
+
+       function endGame() { gameActive = false; document.getElementById('target').style.display = 'none'; document.getElementById('start-game-btn').style.display = 'block'; document.getElementById('game-info').innerText = "Score: " + score; }
+
+       function resetGame() { gameActive = false; document.getElementById('target').style.display = 'none'; }
+
+
+
+       async function sendChat() {
+
+           const i = document.getElementById('c-in'), r = document.getElementById('res');
+
+           if(!i.value) return;
+
+           const m = i.value; i.value = '';
+
+           r.innerHTML += `<div><b>Вы:</b> ${m}</div>`;
+
+           const t = document.createElement('div'); t.innerHTML = `<b>Nexus:</b> <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>`;
+
+           r.appendChild(t);
+
+           try {
+
+               const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(m)}?model=openai&system=Nexus assistant. Short and mysterious.`);
+
+               const txt = await res.text();
+
+               t.innerHTML = `<b>Nexus:</b> ${txt}`;
+
+           } catch { t.innerHTML = `<b>Nexus:</b> Overload.`; }
+
+           r.scrollTop = r.scrollHeight;
+
+       }
+
+   </script>
 
 </body>
 
