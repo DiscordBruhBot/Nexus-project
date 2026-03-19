@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>AI Nexus | Thinking Wave v.21.5</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+
+    <style>
+
+        :root { --p: #ffffff; --bg: #000000; }
+
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: #fff; overflow: hidden; display: flex; justify-content: center; align-items: center; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+
+
+        /* КОСМОС */
+
+        #cosmos { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: 10; pointer-events: none; }
+
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.8; }
+
+        .comet { position: absolute; width: 1px; background: linear-gradient(180deg, rgba(255,255,255,0.8), transparent); }
+
+
+
+        /* ЯДРО */
+
+        #core-star { 
+
+            position: absolute; width: 160px; height: 160px; background: white; border-radius: 50%; 
+
+            box-shadow: 0 0 60px white, 0 0 100px white; z-index: 100; opacity: 1;
+
+            display: flex; justify-content: center; align-items: center; pointer-events: none;
+
+            top: -200px; left: 50%; transform: translate(-50%, -50%);
+
+        }
+
+        #core-star span { color: black; font-family: 'Orbitron'; font-weight: 900; font-size: 22px; opacity: 0; }
+
+
+
+        /* ТРЯСКА */
+
+        @keyframes screenShake { 0%, 100% { transform: translate(0,0); } 20% { transform: translate(-5px,-5px); } 40% { transform: translate(5px,5px); } 60% { transform: translate(-3px,3px); } }
+
+        .shake-active { animation: screenShake 0.4s ease-in-out; }
+
+
+
+        /* ХАБ */
+
+        #hub-menu { display: none; position: absolute; gap: 35px; z-index: 500; }
+
+        .hub-btn { width: 150px; height: 150px; border-radius: 50%; background: #fff; border: 2px solid #fff; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transform: scale(0.5); }
+
+        .hub-btn b { font-style: normal; font-size: 40px; color: #000; }
+
+        .hub-btn span { font-family: 'Orbitron'; font-size: 11px; font-weight: 700; color: #000; margin-top: 10px; text-transform: uppercase; }
+
+
+
+        /* АНИМАЦИИ ИКОНОК */
+
+        .bubble-anim { animation: bubble 2s infinite ease-in-out; }
+
+        @keyframes bubble { 0%, 100% { transform: scale(1) rotate(-5deg); } 50% { transform: scale(1.1) rotate(5deg); } }
+
+        .gear-anim { animation: spin 4s infinite linear; }
+
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+
+
+        /* ВОЛНА ТОЧЕК */
+
+        .dot { display: inline-block; animation: wave 1s infinite; }
+
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes wave { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+
+
+        /* ОКНА */
+
+        .nexus-box { display: none; position: absolute; width: min(420px, 90vw); background: rgba(5,5,5,0.98); border: 2px solid #fff; border-radius: 20px; padding: 25px; z-index: 1000; text-align: center; }
+
+        #res { height: 220px; overflow-y: auto; text-align: left; margin-bottom: 15px; border-bottom: 1px solid #333; font-size: 14px; padding-right: 5px; scroll-behavior: smooth; }
+
+        #res div { margin-bottom: 10px; line-height: 1.4; }
+
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #444; background: #000; color: #fff; margin-bottom: 10px; outline: none; box-sizing: border-box; }
+
+        button { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #fff; color: #000; font-weight: 900; cursor: pointer; font-family: 'Orbitron'; }
+
+        .back-btn { background: none; border: 1px solid #fff; color: #fff; margin-top: 10px; }
+
+
+
+        #chat-trigger { display: none; position: absolute; z-index: 150; width: 160px; height: 160px; cursor: pointer; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+    </style>
+
+</head>
+
+<body>
+
+
+
+    <div id="cosmos"></div>
+
+    <div id="core-star"><span>START</span></div>
+
+    <div id="chat-trigger" onclick="detonate()"></div>
+
+
+
+    <div id="hub-menu">
+
+        <div class="hub-btn" onclick="openModule('chat')"><b class="bubble-anim">💬</b><span>Чат бот</span></div>
+
+        <div class="hub-btn" onclick="openModule('status')"><b class="gear-anim">⚙️</b><span>Система</span></div>
+
+    </div>
+
+
+
+    <div class="nexus-box" id="chat-box">
+
+        <h2 style="font-family:Orbitron; font-size: 18px; margin-bottom: 15px;">NEURAL LINK</h2>
+
+        <div id="res"></div>
+
+        <input id="c-in" placeholder="Сигнал...">
+
+        <button id="s-btn" onclick="sendChat()">ОТПРАВИТЬ</button>
+
+        <button class="back-btn" onclick="closeModule('chat')">НАЗАД</button>
+
+    </div>
+
+
+
+    <div class="nexus-box" id="status-box">
+
+        <h2 style="font-family:Orbitron">SYSTEM</h2>
+
+        <div style="text-align:left; font-family:monospace; font-size:13px; line-height:1.8;">
+
+            > IDENTITY: GERMAN<br>
+
+            > STATUS: ACTIVE<br>
+
+            > ENGINE: V.21.5
+
+        </div>
+
+        <button class="back-btn" style="margin-top:20px" onclick="closeModule('status')">ЗАКРЫТЬ</button>
+
+    </div>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <script>
+
+        const particles = [];
+
+        function createCosmos() {
+
+            for (let i = 0; i < 150; i++) {
+
+                const s = document.createElement('div');
+
+                const isC = Math.random() > 0.95;
+
+                s.className = isC ? 'comet' : 'star';
+
+                s.style.left = Math.random() * 100 + 'vw';
+
+                s.style.top = Math.random() * -100 + 'vh';
+
+                const size = isC ? 1 : Math.random() * 3 + 1;
+
+                s.style.width = size + 'px';
+
+                if(isC) s.style.height = (Math.random()*60+40)+'px'; else s.style.height = size + 'px';
+
+                document.getElementById('cosmos').appendChild(s);
+
+                particles.push({el: s, speed: Math.random() * 3 + 2});
+
+            }
+
+        }
+
+
+
+        function animateStars() {
+
+            particles.forEach(s => {
+
+                let top = parseFloat(s.el.style.top || 0);
+
+                top += s.speed;
+
+                if (top > window.innerHeight) { top = -100; s.el.style.left = Math.random() * 100 + 'vw'; }
+
+                s.el.style.top = top + 'px';
+
+            });
+
+            requestAnimationFrame(animateStars);
+
+        }
+
+
+
+        window.onload = () => {
+
+            createCosmos(); animateStars();
+
+            const floor = window.innerHeight - 90;
+
+            const center = window.innerHeight / 2;
+
+            const tl = gsap.timeline({delay: 0.2});
+
+            tl.to('#core-star', { top: floor + 'px', duration: 0.6, ease: "power2.in" })
+
+              .to('#core-star', { top: (floor - 130) + 'px', duration: 0.3, ease: "power2.out" })
+
+              .to('#core-star', { top: floor + 'px', duration: 0.3, ease: "power2.in" })
+
+              .to('#core-star', { top: center + 'px', duration: 0.8, ease: "back.out(1.5)", onComplete: () => {
+
+                  document.body.classList.add('shake-active');
+
+                  setTimeout(() => document.body.classList.remove('shake-active'), 400);
+
+              }})
+
+              .to('#core-star span', { opacity: 1, duration: 0.5 }).set('#chat-trigger', { display: 'block' });
+
+        };
+
+
+
+        function detonate() {
+
+            for(let i=0; i<2; i++) {
+
+                const w = document.createElement('div');
+
+                w.style.cssText = `position:absolute; border:4px solid #fff; border-radius:50%; width:100px; height:100px; left:50%; top:50%; transform:translate(-50%, -50%); pointer-events:none; z-index:90;`;
+
+                document.body.appendChild(w);
+
+                gsap.to(w, { opacity:0, width:'250vw', height:'250vw', duration:1.2, delay: i*0.2, onComplete:()=>w.remove() });
+
+            }
+
+            document.body.classList.add('shake-active');
+
+            gsap.to('#core-star', { scale: 20, opacity: 0, duration: 0.6 });
+
+            document.getElementById('chat-trigger').style.display = 'none';
+
+            setTimeout(() => { document.getElementById('hub-menu').style.display = 'flex'; gsap.to('.hub-btn', { opacity: 1, scale: 1, duration: 0.4, stagger: 0.1 }); }, 400);
+
+        }
+
+
+
+        function openModule(id) { document.getElementById('hub-menu').style.display = 'none'; document.getElementById(id + '-box').style.display = 'block'; }
+
+        function closeModule(id) { document.getElementById(id + '-box').style.display = 'none'; document.getElementById('hub-menu').style.display = 'flex'; }
+
+
+
+        async function sendChat() {
+
+            const i = document.getElementById('c-in'), r = document.getElementById('res'), b = document.getElementById('s-btn');
+
+            if(!i.value || b.disabled) return;
+
+            const msg = i.value; i.value = ''; b.disabled = true;
+
+            r.innerHTML += `<div><b>Вы:</b> ${msg}</div>`;
+
+            
+
+            // СОЗДАЕМ ВОЛНУ ОЖИДАНИЯ
+
+            const thinking = document.createElement('div');
+
+            thinking.id = 'thinking-row';
+
+            thinking.innerHTML = `<b>Nexus:</b> <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>`;
+
+            r.appendChild(thinking);
+
+            r.scrollTop = r.scrollHeight;
+
+
+
+            try {
+
+                const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(msg)}?model=openai&system=Nexus. Short.`);
+
+                const data = await response.text();
+
+                thinking.remove(); // Удаляем волну
+
+                r.innerHTML += `<div><b style="color:#aaa">Nexus:</b> ${data}</div>`;
+
+            } catch(e) {
+
+                thinking.remove();
+
+                r.innerHTML += `<div style="color:red">Ошибка.</div>`;
+
+            }
+
+            b.disabled = false; r.scrollTop = r.scrollHeight;
+
+        }
+
+    </script>
+
+</body>
+
+</html>
